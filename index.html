@@ -8,18 +8,18 @@
 </head>
 <body>
     <div class="navbar">
-        <h2>Raspberry Dashboard </h2>
+        <h2>Raspberry Dashboard</h2>
         <ul id="nav-links">
             <li><a href="index.html" class="nav-link" data-page="home">Home</a></li>
             <li><a href="#" class="nav-link" data-page="about">About</a></li>
-            <li><a href="components" class="nav-link" data-page="contact">components</a></li>
+            <li><a href="components" class="nav-link" data-page="contact">Components</a></li>
         </ul>
     </div>
 
     <div class="sidebar">
         <a href="#" class="sidebar-link" data-page="home">Home</a>
         <a href="#" class="sidebar-link" data-page="news">News</a>
-        <a href="#" class="sidebar-link" data-page="contact">components</a>
+        <a href="components" class="sidebar-link" data-page="components">Components</a>
         <a href="#" class="sidebar-link" data-page="about">About</a>
     </div>
 
@@ -29,32 +29,75 @@
         <!-- Cards for various data types -->
         <div class="card" id="temperature-card">
             <h3>Temperature</h3>
-            <p class="card-value">Waiting for data...</p>
+            <p class="card-value" id="temperature-value">Waiting for data...</p>
         </div>
 
         <div class="card" id="humidity-card">
             <h3>Humidity</h3>
-            <p class="card-value">Waiting for data...</p>
+            <p class="card-value" id="humidity-value">Waiting for data...</p>
         </div>
 
         <div class="card" id="gps-card">
             <h3>GPS Coordinates</h3>
-            <p class="card-value">Waiting for data...</p>
+            <p class="card-value" id="gps-value">Waiting for data...</p>
         </div>
 
         <div class="card" id="pressure-card">
             <h3>Pressure</h3>
-            <p class="card-value">Waiting for data...</p>
+            <p class="card-value" id="pressure-value">Waiting for data...</p>
         </div>
 
         <div class="card" id="altitude-card">
             <h3>Altitude</h3>
-            <p class="card-value">Waiting for data...</p>
+            <p class="card-value" id="altitude-value">Waiting for data...</p>
         </div>
 
         <p id="debug-data">Waiting for debug data...</p>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Function to fetch data from the server and update the dashboard
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/data');
+                const data = await response.json();
+                console.log('Data fetched:', data); // Debug log
+
+                // Loop through each Pico device's data
+                Object.keys(data).forEach(pico_id => {
+                    const picoData = data[pico_id];
+
+                    // Update each data card based on available data types
+                    if (picoData.temperature) {
+                        document.getElementById('temperature-value').textContent = `${picoData.temperature.value} °C`;
+                    }
+                    if (picoData.humidity) {
+                        document.getElementById('humidity-value').textContent = `${picoData.humidity.value} %`;
+                    }
+                    if (picoData.gps) {
+                        document.getElementById('gps-value').textContent = `Lat: ${picoData.gps.latitude}, Lon: ${picoData.gps.longitude}`;
+                    }
+                    if (picoData.pressure) {
+                        document.getElementById('pressure-value').textContent = `${picoData.pressure.value} hPa`;
+                    }
+                    if (picoData.altitude) {
+                        document.getElementById('altitude-value').textContent = `${picoData.altitude.value} m`;
+                    }
+
+                    // Debug data display
+                    document.getElementById('debug-data').textContent = JSON.stringify(picoData, null, 2);
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('debug-data').textContent = 'Error fetching data';
+            }
+        }
+
+        // Fetch data every 5 seconds
+        setInterval(fetchData, 5000);
+
+        // Initial fetch on page load
+        fetchData();
+    </script>
 </body>
 </html>

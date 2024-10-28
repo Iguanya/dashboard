@@ -10,25 +10,71 @@
     <div class="navbar">
         <h2>Raspberry Dashboard</h2>
         <ul id="nav-links">
-            <li><a href="#" class="nav-link" data-page="home">Home</a></li>
+            <li><a href="index.html" class="nav-link" data-page="home">Home</a></li>
             <li><a href="#" class="nav-link" data-page="about">About</a></li>
             <li><a href="#" class="nav-link" data-page="contact">Contact</a></li>
-            <li><a href="#" class="nav-link" data-page="components">Components</a></li>
+            <li><a href="components" class="nav-link" data-page="components">Components</a></li>
         </ul>
     </div>
 
     <div class="sidebar">
-        <a href="#" class="sidebar-link" data-page="home">Home</a>
+        <a href="index.html" class="sidebar-link" data-page="home">Home</a>
         <a href="#" class="sidebar-link" data-page="news">News</a>
-        <a href="#" class="sidebar-link" data-page="components">Components</a>
+        <a href="components" class="sidebar-link" data-page="components">Components</a>
         <a href="#" class="sidebar-link" data-page="about">About</a>
     </div>
 
     <div class="content">
         <h1>Connected Picos</h1>
         <p id="pico-count">Loading...</p>
+        <div id="pico-list">
+            <!-- Pico devices will be listed here -->
+        </div>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        // Function to fetch and display Pico devices and their status
+        async function fetchPicos() {
+            try {
+                const response = await fetch('/api/picos');
+                const picoList = await response.json();
+
+                // Display the number of Picos connected
+                document.getElementById('pico-count').textContent = `Connected Picos: ${picoList.length}`;
+
+                // Clear any existing content in the pico list
+                const picoListContainer = document.getElementById('pico-list');
+                picoListContainer.innerHTML = '';
+
+                // Display each Pico's details
+                picoList.forEach(pico => {
+                    const picoDiv = document.createElement('div');
+                    picoDiv.classList.add('pico-card');
+
+                    const picoId = document.createElement('h3');
+                    picoId.textContent = `Pico ID: ${pico.pico_id}`;
+                    picoDiv.appendChild(picoId);
+
+                    // Display each data type and value for this Pico
+                    for (const [key, value] of Object.entries(pico.data)) {
+                        const dataParagraph = document.createElement('p');
+                        dataParagraph.textContent = `${key}: ${value.value || value}`;
+                        picoDiv.appendChild(dataParagraph);
+                    }
+
+                    picoListContainer.appendChild(picoDiv);
+                });
+            } catch (error) {
+                console.error('Error fetching Picos:', error);
+                document.getElementById('pico-count').textContent = 'Error loading Pico data';
+            }
+        }
+
+        // Fetch Picos every 5 seconds
+        setInterval(fetchPicos, 5000);
+
+        // Initial fetch on page load
+        fetchPicos();
+    </script>
 </body>
 </html>
