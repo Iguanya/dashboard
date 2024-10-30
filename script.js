@@ -81,7 +81,6 @@ async function fetchData() {
         updateSensorData('temperature-card', 'Temperature', data.temperature ? `${data.temperature.value} ${data.temperature.unit}` : 'N/A');
         updateSensorData('humidity-card', 'Humidity', data.humidity ? `${data.humidity.value} ${data.humidity.unit}` : 'N/A');
         updateSensorData('gps-card', 'GPS Coordinates', data.gps ? `Lat: ${data.gps.latitude}, Long: ${data.gps.longitude}` : 'N/A');
-        updateSensorData('pressure-card', 'Pressure', data.pressure ? `${data.pressure.value} ${data.pressure.unit}` : 'N/A');
         updateSensorData('altitude-card', 'Altitude', data.altitude ? `${data.altitude.value} ${data.altitude.unit}` : 'N/A');
     } catch (error) {
         console.error('Error fetching data:', error);
