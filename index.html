@@ -3,10 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>UV-C Disinfectant</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <header>
+        <h1>UV-C Disinfectant</h1>
+        <div id="status"style="margin-left: 20px;">
+            Current Status: <span id="disinfection-status">Stopped</span>
+            <br>
+            Motion Detected: <span id="motion-status">No</span>
+            <br>
+            Connection Status: <span id="connection-status">Disconnected</span>
+        </div>
+    </header>
+    <main>
+        <section id="control-panel">
+            <h2>Control Panel</h2>
+            <button id="start-button">Start Disinfection</button>
+            <button id="stop-button">Stop Disinfection</button>
+            <button id="pause-button">Pause</button>
+            <button id="resume-button">Resume</button>
+        </section>
+        <section id="sensor-data">
+            <h2>Sensor Data</h2>
+            <div id="sensor-readings">
+                <p>UV Intensity: <span id="uv-intensity">N/A</span></p>
+                <p>Alarm: <span id="Alarm">N/A</span></p>
+                <p>Motion Detection sensor: <span id="motion">N/A</span></p>
+            </div>
+            <div id="timer">
+                <h3>Timer</h3>
+                <p id="countdown">00:00</p>
+            </div>
+        </section>
+        <section id="scheduling">
+            <h2>Scheduling</h2>
+            <input type="date" id="schedule-date">
+            <input type="time" id="schedule-start">
+            <input type="time" id="schedule-end">
+            <button id="schedule-button">Set Schedule</button>
+            <div id="recurrence-options">
+                <label for="recurrence">Recurrence:</label>
+                <select id="recurrence">
+                    <option value="none">None</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>UV-C System Control</p>
+    </footer>
+    <script src="scripts.js"></script>
+=======
     <div class="navbar">
         <h2>Raspberry Dashboard</h2>
         <ul id="nav-links">
