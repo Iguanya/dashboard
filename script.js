@@ -78,10 +78,8 @@ async function fetchData() {
         const data = await response.json();
 
         // Update the different cards with the respective data
-        updateSensorData('temperature-card', 'Temperature', data.temperature ? `${data.temperature.value} ${data.temperature.unit}` : 'N/A');
-        updateSensorData('humidity-card', 'Humidity', data.humidity ? `${data.humidity.value} ${data.humidity.unit}` : 'N/A');
-        updateSensorData('gps-card', 'GPS Coordinates', data.gps ? `Lat: ${data.gps.latitude}, Long: ${data.gps.longitude}` : 'N/A');
-        updateSensorData('altitude-card', 'Altitude', data.altitude ? `${data.altitude.value} ${data.altitude.unit}` : 'N/A');
+        updateSensorData('Motion detection-card', 'motion', data.motion ? `${data.motion.value} ${data.tmotion.unit}` : 'N/A');
+        updateSensorData('UV intensity', 'uv-intensity', data.uv-intensity ? `${data.uv-intensity.value} ${data.uv-intensity.unit}` : 'N/A');
     } catch (error) {
         console.error('Error fetching data:', error);
         document.getElementById('sensor-data').innerText = 'Error fetching data';
