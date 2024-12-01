@@ -1,126 +1,199 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const navLinks = document.querySelectorAll('.nav-link');
-    const sidebarLinks = document.querySelectorAll('.sidebar-link');
-    const contentArea = document.querySelector('.content');
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Script loaded successfully!");
 
-    // Function to set the active link in the nav and sidebar
-    function setActiveLink(page) {
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.dataset.page === page) {
-                link.classList.add('active');
-            }
-        });
+    // DOM Elements
+    const disinfectionStatusEl = document.getElementById("disinfection-status");
+    const motionStatusEl = document.getElementById("motion-status");
+    const connectionStatusEl = document.getElementById("connection-status");
+    const countdownEl = document.getElementById("countdown");
 
-        sidebarLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.dataset.page === page) {
-                link.classList.add('active');
-            }
-        });
+    const uvIntensityEl = document.getElementById("uv-intensity");
+    const alarmStatusEl = document.getElementById("alarm-status");
+    const motionSensorEl = document.getElementById("motion");
+    const temperatureEl = document.getElementById("temperature-value");
+    const humidityEl = document.getElementById("humidity-value");
+    const pressureEl = document.getElementById("pressure-value");
 
-        // Debug message to show the current page
-        document.getElementById('debug-data').innerText = `You are on the ${page} page`;
+    const darkModeToggle = document.getElementById("dark-mode-toggle");
+    const body = document.body;
+    const pico_id = "d83add5b5a53";
+
+    let timerInterval = null;
+    let timerSeconds = 0;
+
+    // Add a log to the Logs section
+    function addLog(message) {
+        console.log(`[LOG]: ${message}`); // Log to console for debugging
     }
 
-    // Function to load page content dynamically
-    async function loadPageContent(page) {
-        try {
-            const response = await fetch(`/${page}.html`);
-            if (!response.ok) {
-                throw new Error('Page not found');
-            }
-            const content = await response.text();
-            contentArea.innerHTML = content;
-            setActiveLink(page);
+    // Update Status
+    function updateStatus(disinfectionStatus, motionDetected, connectionStatus) {
+        disinfectionStatusEl.textContent = disinfectionStatus;
+        motionStatusEl.textContent = motionDetected ? "Yes" : "No";
+        connectionStatusEl.textContent = connectionStatus;
+    }
 
-            // If it's the components page, trigger data fetching for connected Picos
-            if (page === 'components') {
-                fetchPicoData();
-            } else if (page === 'home') {
-                fetchData();  // Fetch sensor data for the home page
-                setInterval(fetchData, 3000);  // Fetch sensor data every 3 seconds
+    // Timer Functions
+    function startTimer() {
+        timerSeconds = 0;
+        timerInterval = setInterval(() => {
+            timerSeconds++;
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            countdownEl.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+        timerSeconds = 0;
+        countdownEl.textContent = "00:00";
+    }
+
+    // Fetch Sensor Data from Server
+    async function fetchData() {
+        try {
+            const response = await fetch("/api/data");
+            if (!response.ok) throw new Error("Failed to fetch data from the server");
+
+            const data = await response.json();
+
+            // Extract and update data for the first Pico (if available)
+            const firstPico = Object.keys(data)[0];
+            if (firstPico) {
+                const picoData = data[firstPico];
+
+                // Update UI elements with received data
+                temperatureEl.textContent =
+                    picoData.temperature && picoData.temperature.value !== undefined
+                        ? `${picoData.temperature.value} °C`
+                        : "No sensor connected";
+
+                humidityEl.textContent = picoData.humidity
+                    ? `${picoData.humidity.value} %`
+                    : "No sensor connected";
+
+                pressureEl.textContent = picoData.pressure
+                    ? `${picoData.pressure.value} hPa`
+                    : "No sensor connected";
+
+                motionSensorEl.textContent = picoData.motion?.detected ? "Yes" : "No";
+                alarmStatusEl.textContent = picoData.alarm
+                    ? picoData.alarm.status
+                    : "N/A";
+
+                addLog("Sensor data updated successfully.");
+            } else {
+                console.warn("No Pico data available");
             }
         } catch (error) {
-            console.error(`Error loading page ${page}:`, error);
-            contentArea.innerHTML = '<p>Error loading page content</p>';
+            console.error("Error fetching data:", error);
+            addLog("Error fetching sensor data");
         }
     }
 
-    // Add event listeners to navbar and sidebar links for navigation
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(event) {
-            event.preventDefault();
-            const page = this.dataset.page;
-            loadPageContent(page);
+async function sendCommand(pico_id, command, action = "send") {
+    try {
+        const pico_id = "d83add5b5a53";
+        const payload = {
+            pico_id,
+            action,
+            command,
+        };
+
+        console.log("Sending command:", payload);
+
+        const response = await fetch("/api/command", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
         });
+
+        console.log("Response:", response);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to send command: ${errorText}`);
+    }
+
+        const result = await response.json();
+        addLog(`Command '${command}' sent successfully: ${result.message}`);
+    } catch (error) {
+        console.error("Error sending command:", error);
+        addLog(`Error sending command '${command}': ${error.message}`);
+    }
+}
+
+    // Dark Mode Toggle
+    const savedMode = localStorage.getItem("dark-mode");
+    if (savedMode === "enabled") {
+        body.classList.add("dark-mode");
+        darkModeToggle.textContent = "Disable Dark Mode";
+    }
+
+    darkModeToggle.addEventListener("click", () => {
+        if (body.classList.contains("dark-mode")) {
+            body.classList.remove("dark-mode");
+            darkModeToggle.textContent = "Enable Dark Mode";
+            localStorage.setItem("dark-mode", "disabled");
+        } else {
+            body.classList.add("dark-mode");
+            darkModeToggle.textContent = "Disable Dark Mode";
+            localStorage.setItem("dark-mode", "enabled");
+        }
     });
 
-    sidebarLinks.forEach(link => {
-        link.addEventListener('click', function(event) {
-            event.preventDefault();
-            const page = this.dataset.page;
-            loadPageContent(page);
-        });
+    // Assuming you've defined picoId as "d83add5b5a53"
+    document.getElementById("start-button").addEventListener("click", () => {
+        updateStatus("Active", false, "Connected");
+        startTimer();
+        sendCommand(pico_id, "start_disinfection");
     });
 
-    // Load the homepage on initial load
-    loadPageContent('home');
+    document.getElementById("stop-button").addEventListener("click", () => {
+        updateStatus("Stopped", false, "Disconnected");
+        stopTimer();
+        sendCommand(pico_id, "stop_disinfection");
+    });
+
+    document.getElementById("pause-button").addEventListener("click", () => {
+        updateStatus("Paused", false, "Connected");
+        clearInterval(timerInterval);
+        sendCommand(pico_id, "pause_disinfection");
+    });
+
+    document.getElementById("resume-button").addEventListener("click", () => {
+        updateStatus("Active", false, "Connected");
+        startTimer();
+        sendCommand(pico_id, "resume_disinfection");
+    });
+
+    // Scheduling Logic
+    document.getElementById("schedule-button").addEventListener("click", () => {
+        const scheduleDate = document.getElementById("schedule-date").value;
+        const scheduleStart = document.getElementById("schedule-start").value;
+        const scheduleEnd = document.getElementById("schedule-end").value;
+        const recurrence = document.getElementById("recurrence").value;
+
+        if (!scheduleDate || !scheduleStart || !scheduleEnd) {
+            alert("Please fill in all scheduling fields");
+            return;
+        }
+
+        const scheduleData = {
+            date: scheduleDate,
+            start: scheduleStart,
+            end: scheduleEnd,
+            recurrence,
+        };
+
+        sendCommand("set_schedule", scheduleData);
+        alert(`Schedule set for ${scheduleDate} from ${scheduleStart} to ${scheduleEnd}`);
+    });
+
+    // Fetch data periodically
+    setInterval(fetchData, 5000);
+    fetchData(); // Initial fetch
 });
-
-// Function to fetch sensor data from the server
-async function fetchData() {
-    try {
-        const response = await fetch('/api/data'); // Fetch from your server endpoint
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-
-        // Update the different cards with the respective data
-        updateSensorData('Motion detection-card', 'motion', data.motion ? `${data.motion.value} ${data.tmotion.unit}` : 'N/A');
-        updateSensorData('UV intensity', 'uv-intensity', data.uv-intensity ? `${data.uv-intensity.value} ${data.uv-intensity.unit}` : 'N/A');
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        document.getElementById('sensor-data').innerText = 'Error fetching data';
-    }
-}
-
-// Function to update sensor data cards
-function updateSensorData(cardId, label, value) {
-    const card = document.getElementById(cardId);
-    if (card) {
-        card.querySelector('.card-value').innerText = value;
-    }
-}
-
-// Function to fetch connected Pico data for the components page
-async function fetchPicoData() {
-    try {
-        const response = await fetch('/api/picos'); // Assuming an endpoint for connected Picos
-        if (!response.ok) {
-            throw new Error('Error fetching Pico data');
-        }
-        const picos = await response.json();
-        const picoCount = document.getElementById('pico-count');
-        picoCount.innerText = `${picos.length} Picos Connected`;
-
-        // Generate Pico cards
-        const contentArea = document.querySelector('.content');
-        picos.forEach(pico => {
-            const picoCard = document.createElement('div');
-            picoCard.classList.add('card');
-            picoCard.innerHTML = `
-                <h3>Pico ID: ${pico.id}</h3>
-                <p>Temperature: ${pico.temperature} °C</p>
-                <p>Humidity: ${pico.humidity} %</p>
-                <p>Pressure: ${pico.pressure} Pa</p>
-                <p>GPS: Lat: ${pico.gps.latitude}, Long: ${pico.gps.longitude}</p>
-            `;
-            contentArea.appendChild(picoCard);
-        });
-    } catch (error) {
-        console.error('Error fetching Pico data:', error);
-        document.getElementById('pico-count').innerText = 'Error fetching Pico data';
-    }
-}

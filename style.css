@@ -1,48 +1,190 @@
+/* Define CSS variables for light and dark mode */
+:root {
+    --background-color: #f5f5f5;
+    --header-background-color: #ffffff;
+    --text-color: #333;
+    --border-color: #ddd;
+    --card-background-color: #ffffff;
+    --card-shadow-color: rgba(0, 0, 0, 0.1);
+    --button-start-bg: #4caf50; /* Green */
+    --button-stop-bg: #f44336; /* Red */
+    --button-pause-bg: #ffc107; /* Amber */
+    --button-resume-bg: #2196f3; /* Blue */
+    --button-hover-bg: #1e88e5;
+    --footer-background: #f9f9f9;
+    --footer-text-color: #555;
+}
+
+body.dark-mode {
+    --background-color: #121212;
+    --header-background-color: #1e1e1e;
+    --text-color: #ddd;
+    --border-color: #333;
+    --card-background-color: #1e1e1e;
+    --card-shadow-color: rgba(0, 0, 0, 0.6);
+    --button-start-bg: #2e7d32; /* Darker green */
+    --button-stop-bg: #d32f2f; /* Darker red */
+    --button-pause-bg: #ffa000; /* Darker amber */
+    --button-resume-bg: #1976d2; /* Darker blue */
+    --button-hover-bg: #1565c0;
+    --footer-background: #1e1e1e;
+    --footer-text-color: #aaa;
+}
+
+/* General Styling */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 20px;
-    background-color: #6cbdd1;
+    padding: 0;
+    background: var(--background-color);
+    color: var(--text-color);
 }
 
 header {
-    background: #0e2b50;
-    color: white;
-    padding: 10px 0;
+    background: var(--header-background-color);
+    padding: 1rem;
     text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--text-color);
+}
+
+.status-bar {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
 }
 
 main {
-    margin-top: 20px;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr 2fr 1fr;
+    padding: 1.5rem;
 }
 
-section {
-    background: white;
-    border-radius: 5px;
-    padding: 20px;
-    margin: 10px 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+/* Control Panel */
+.control-panel {
+    grid-column: 1 / 2;
+    background: var(--card-background-color);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px var(--card-shadow-color);
+    text-align: center;
 }
 
-button {
-    background-color: #28a745;
-    color: white;
+.control-panel h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.action-button {
+    font-size: 1rem;
+    padding: 0.8rem;
     border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    margin: 5px;
     border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    width: 100%;
 }
 
-button:hover {
-    background-color: #218838;
+.action-button.start {
+    background: var(--button-start-bg);
+    color: white;
 }
 
-h2 {
-    margin: 0 0 10px;
+.action-button.stop {
+    background: var(--button-stop-bg);
+    color: white;
 }
 
+.action-button.pause {
+    background: var(--button-pause-bg);
+    color: white;
+}
+
+.action-button.resume {
+    background: var(--button-resume-bg);
+    color: white;
+}
+
+.action-button:hover {
+    background: var(--button-hover-bg);
+}
+
+/* Sensor Data */
+.sensor-data {
+    grid-column: 2 / 3;
+    background: var(--card-background-color);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px var(--card-shadow-color);
+}
+
+.sensor-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.card {
+    background: var(--card-background-color);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0px 2px 4px var(--card-shadow-color);
+}
+
+.sensor-value {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-top: 0.5rem;
+}
+
+/* Scheduling */
+.scheduling {
+    grid-column: 3 / 4;
+    background: var(--card-background-color);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px var(--card-shadow-color);
+}
+
+.schedule-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.schedule-button {
+    background: var(--button-resume-bg);
+    color: white;
+    font-size: 1rem;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.schedule-button:hover {
+    background: var(--button-hover-bg);
+}
+
+/* Footer */
 footer {
     text-align: center;
-    margin-top: 20px;
+    padding: 0.5rem;
+    background: var(--footer-background);
+    color: var(--footer-text-color);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--border-color);
 }

@@ -3,47 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UV-C Disinfectant</title>
+    <title>UV-C Disinfectant Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>UV-C Disinfectant</h1>
-        <div id="status"style="margin-left: 20px;">
-            Current Status: <span id="disinfection-status">Stopped</span>
-            <br>
-            Motion Detected: <span id="motion-status">No</span>
-            <br>
-            Connection Status: <span id="connection-status">Disconnected</span>
+<header>
+    <div class="header-container">
+        <h1>UV-C Disinfectant Dashboard</h1>
+        <div class="status-bar">
+            <p>Current Status: <span id="disinfection-status">Stopped</span></p>
+            <p>Motion Detected: <span id="motion-status">No</span></p>
+            <p>Connection Status: <span id="connection-status">Disconnected</span></p>
         </div>
-    </header>
+        <button id="dark-mode-toggle" class="action-button">Enable Dark Mode</button>
+    </div>
+</header>
+
     <main>
-        <section id="control-panel">
+        <!-- Control Panel -->
+        <section class="control-panel">
             <h2>Control Panel</h2>
-            <button id="start-button">Start Disinfection</button>
-            <button id="stop-button">Stop Disinfection</button>
-            <button id="pause-button">Pause</button>
-            <button id="resume-button">Resume</button>
+            <div class="button-group">
+                <button id="start-button" class="action-button start">Start Disinfection</button>
+                <button id="stop-button" class="action-button stop">Stop Disinfection</button>
+                <button id="pause-button" class="action-button pause">Pause</button>
+                <button id="resume-button" class="action-button resume">Resume</button>
+            </div>
         </section>
-        <section id="sensor-data">
+
+        <!-- Sensor Data Section -->
+        <section class="sensor-data">
             <h2>Sensor Data</h2>
-            <div id="sensor-readings">
-                <p>UV Intensity: <span id="uv-intensity">N/A</span></p>
-                <p>Alarm: <span id="Alarm">N/A</span></p>
-                <p>Motion Detection sensor: <span id="motion">N/A</span></p>
-            </div>
-            <div id="timer">
-                <h3>Timer</h3>
-                <p id="countdown">00:00</p>
+            <div class="sensor-cards">
+                <div class="card">
+                    <h3>UV Intensity</h3>
+                    <p class="sensor-value" id="uv-intensity">N/A</p>
+                </div>
+                <div class="card">
+                    <h3>Alarm Status</h3>
+                    <p class="sensor-value" id="alarm-status">N/A</p>
+                </div>
+                <div class="card">
+                    <h3>Motion Detection</h3>
+                    <p class="sensor-value" id="motion">N/A</p>
+                </div>
+                <div class="card">
+                    <h3>Temperature</h3>
+                    <p class="sensor-value" id="temperature-value">No sensor connected</p>
+                </div>
+                <div class="card">
+                    <h3>Humidity</h3>
+                    <p class="sensor-value" id="humidity-value">No sensor connected</p>
+                </div>
+                <div class="card">
+                    <h3>Pressure</h3>
+                    <p class="sensor-value" id="pressure-value">No sensor connected</p>
+                </div>
             </div>
         </section>
-        <section id="scheduling">
+
+        <!-- Scheduling Section -->
+        <section class="scheduling">
             <h2>Scheduling</h2>
-            <input type="date" id="schedule-date">
-            <input type="time" id="schedule-start">
-            <input type="time" id="schedule-end">
-            <button id="schedule-button">Set Schedule</button>
-            <div id="recurrence-options">
+            <div class="schedule-form">
+                <label for="schedule-date">Date:</label>
+                <input type="date" id="schedule-date">
+                
+                <label for="schedule-start">Start Time:</label>
+                <input type="time" id="schedule-start">
+                
+                <label for="schedule-end">End Time:</label>
+                <input type="time" id="schedule-end">
+                
                 <label for="recurrence">Recurrence:</label>
                 <select id="recurrence">
                     <option value="none">None</option>
@@ -51,105 +82,14 @@
                     <option value="weekly">Weekly</option>
                     <option value="monthly">Monthly</option>
                 </select>
+                
+                <button id="schedule-button" class="schedule-button">Set Schedule</button>
             </div>
         </section>
     </main>
     <footer>
-        <p>UV-C System Control</p>
+        <p>&copy; 2024 UV-C System Dashboard | Designed for Usability</p>
     </footer>
-    <script src="scripts.js"></script>
-=======
-    <div class="navbar">
-        <h2>Raspberry Dashboard</h2>
-        <ul id="nav-links">
-            <li><a href="index.html" class="nav-link" data-page="home">Home</a></li>
-            <li><a href="#" class="nav-link" data-page="about">About</a></li>
-            <li><a href="components" class="nav-link" data-page="contact">Components</a></li>
-        </ul>
-    </div>
-
-    <div class="sidebar">
-        <a href="#" class="sidebar-link" data-page="home">Home</a>
-        <a href="#" class="sidebar-link" data-page="news">News</a>
-        <a href="components" class="sidebar-link" data-page="components">Components</a>
-        <a href="#" class="sidebar-link" data-page="about">About</a>
-    </div>
-
-    <div class="content">
-        <h1>Sensor Data</h1>
-        
-        <!-- Cards for various data types -->
-        <div class="card" id="temperature-card">
-            <h3>Temperature</h3>
-            <p class="card-value" id="temperature-value">Waiting for data...</p>
-        </div>
-
-        <div class="card" id="humidity-card">
-            <h3>Humidity</h3>
-            <p class="card-value" id="humidity-value">Waiting for data...</p>
-        </div>
-
-        <div class="card" id="gps-card">
-            <h3>GPS Coordinates</h3>
-            <p class="card-value" id="gps-value">Waiting for data...</p>
-        </div>
-
-        <div class="card" id="pressure-card">
-            <h3>Pressure</h3>
-            <p class="card-value" id="pressure-value">Waiting for data...</p>
-        </div>
-
-        <div class="card" id="altitude-card">
-            <h3>Altitude</h3>
-            <p class="card-value" id="altitude-value">Waiting for data...</p>
-        </div>
-
-        <p id="debug-data">Waiting for debug data...</p>
-    </div>
-
-    <script>
-        // Function to fetch data from the server and update the dashboard
-        async function fetchData() {
-            try {
-                const response = await fetch('/api/data');
-                const data = await response.json();
-                console.log('Data fetched:', data); // Debug log
-
-                // Loop through each Pico device's data
-                Object.keys(data).forEach(pico_id => {
-                    const picoData = data[pico_id];
-
-                    // Update each data card based on available data types
-                    if (picoData.temperature) {
-                        document.getElementById('temperature-value').textContent = `${picoData.temperature.value} °C`;
-                    }
-                    if (picoData.humidity) {
-                        document.getElementById('humidity-value').textContent = `${picoData.humidity.value} %`;
-                    }
-                    if (picoData.gps) {
-                        document.getElementById('gps-value').textContent = `Lat: ${picoData.gps.latitude}, Lon: ${picoData.gps.longitude}`;
-                    }
-                    if (picoData.pressure) {
-                        document.getElementById('pressure-value').textContent = `${picoData.pressure.value} hPa`;
-                    }
-                    if (picoData.altitude) {
-                        document.getElementById('altitude-value').textContent = `${picoData.altitude.value} m`;
-                    }
-
-                    // Debug data display
-                    document.getElementById('debug-data').textContent = JSON.stringify(picoData, null, 2);
-                });
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                document.getElementById('debug-data').textContent = 'Error fetching data';
-            }
-        }
-
-        // Fetch data every 5 seconds
-        setInterval(fetchData, 5000);
-
-        // Initial fetch on page load
-        fetchData();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
